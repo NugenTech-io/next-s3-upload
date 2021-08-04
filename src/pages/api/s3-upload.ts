@@ -12,6 +12,7 @@ type Handler = NextRouteHandler & { configure: Configure };
 
 type Options = {
   key?: (req: NextApiRequest, filename: string) => string;
+  checkAuth?: (req: NextApiRequest) => string;
 };
 
 let makeRouteHandler = (options: Options = {}): Handler => {
