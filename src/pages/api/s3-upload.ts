@@ -22,6 +22,14 @@ let makeRouteHandler = (options: Options = {}): Handler => {
         .status(500)
         .json({ error: `Next S3 Upload: Missing ENVs ${missing.join(', ')}` });
     } else {
+      if (options.checkAuth) {
+        let auth = await options.checkAuth()
+        if (!auth.authenticated) {
+           return res
+        .status(401)
+        .json({ error: 'Not authenticated to perform this action' });
+        }
+      }
       let config = {
         accessKeyId: process.env.S3_UPLOAD_KEY,
         secretAccessKey: process.env.S3_UPLOAD_SECRET,
