@@ -12,7 +12,7 @@ type Handler = NextRouteHandler & { configure: Configure };
 
 type Options = {
   key?: (req: NextApiRequest, filename: string) => string;
-  checkAuth?: (req: NextApiRequest) => string;
+  checkAuth?: (req: NextApiRequest) => boolean;
 };
 
 let makeRouteHandler = (options: Options = {}): Handler => {
@@ -24,11 +24,11 @@ let makeRouteHandler = (options: Options = {}): Handler => {
         .json({ error: `Next S3 Upload: Missing ENVs ${missing.join(', ')}` });
     } else {
       if (options.checkAuth) {
-        let auth = await options.checkAuth()
-        if (!auth.authenticated) {
-           return res
-        .status(401)
-        .json({ error: 'Not authenticated to perform this action' });
+        let auth = await options.checkAuth(req);
+        if (!auth) {
+          return res
+            .status(401)
+            .json({ error: 'Not authenticated to perform this action' });
         }
       }
       let config = {
