@@ -41,7 +41,7 @@ let makeRouteHandler = (options: Options = {}): Handler => {
 
       let filename = req.query.filename as string;
       let key = options.key
-        ? await options.key(req, filename)
+        ? options.key(req, filename)
         : `next-s3-uploads/${uuidv4()}/${filename.replace(/\s/g, '-')}`;
 
       let policy = {
